@@ -42,7 +42,7 @@ Build a production-grade AI interview simulator that helps users improve technic
 
 ## 3. MVP Scope
 
-## Must Have Features
+### Must Have Features
 
 * User authentication
 * Dashboard
@@ -54,14 +54,14 @@ Build a production-grade AI interview simulator that helps users improve technic
 * Session history
 * Basic scoring system
 
-## Nice To Have
+### Nice To Have
 
 * Real-time interview chat
 * Code editor
 * Analytics dashboard
 * AI follow-up questions
 
-## Postponed Features
+### Postponed Features
 
 * Voice interviews
 * Video interviews
