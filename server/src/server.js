@@ -1,8 +1,7 @@
-require("dotenv").config({ quiet: true });
+require("dotenv").config();
 
 const app = require("./app");
 const connectDB = require("./config/db");
-const generateToken = require("./utils/generateToken");
 
 const PORT = process.env.PORT || 5000;
 
