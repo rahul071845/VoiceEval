@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -30,5 +31,7 @@ app.get("/health", (req,res)=>{
         message:"VoiceEval API Running"
     });
 });
+
+app.use("/api/auth", authRoutes);
 
 module.exports = app;
