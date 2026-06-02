@@ -1,5 +1,6 @@
 const InterviewSession = require("../models/InterviewSession");
 const { getQuestions } = require("../utils/questions");
+const { evaluateAnswer } = require("../utils/evaluateAnswer");
 
 const startInterview = async (userId, role, difficulty) => {
     if (!userId || !role || !difficulty) throw new Error("Missing required fields");
@@ -22,4 +23,40 @@ const startInterview = async (userId, role, difficulty) => {
     };
 };
 
-module.exports = { startInterview };
+const submitAnswer = async (sessionId, answer, userId) => {
+    if (!sessionId || !answer || !userId) throw new Error("Missing required fields");
+    const interview = await InterviewSession.findById(sessionId);
+    if (!interview) throw new Error("Session not found");
+    if (interview.user.toString() !== userId) throw new Error("Unauthorized user.");
+    if (interview.status === "completed") throw new Error("Interview already completed");
+    const question = interview.questions[0];
+    if (question.answer) {
+        throw new Error("Answer already submitted");
+    }
+    question.answer = answer;
+    const { score, feedback } = evaluateAnswer(answer);
+    question.score = score;
+    question.feedback = feedback;
+    interview.score = score;
+    interview.status = "completed";
+    await interview.save();
+    return {
+        score,
+        feedback,
+    }
+};
+
+const getInterviewHistory = async (userId) => {
+    if (!userId) throw new Error("User ID is required");
+    const interviews = await InterviewSession.find({ user: userId }).sort({ createdAt: -1 });
+    return interviews.map((interview) => ({
+        sessionId: interview._id,
+        role: interview.role,
+        difficulty: interview.difficulty,
+        score: interview.score,
+        status: interview.status,
+        createdAt: interview.createdAt,
+    }));
+};
+
+module.exports = { startInterview, submitAnswer, getInterviewHistory };

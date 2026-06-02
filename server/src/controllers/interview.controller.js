@@ -1,9 +1,9 @@
-const { startInterview } = require("../services/interview.service");
+const { startInterview, submitAnswer, getInterviewHistory } = require("../services/interview.service");
 
 const start = async (req, res) => {
     try {
         const { role, difficulty } = req.body;
-        const userId = req.user.id;
+        const userId = req.user._id;
         const interview = await startInterview(userId, role, difficulty);
         res.status(201).json({
             success: true,
@@ -14,9 +14,44 @@ const start = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Failed to start interview",
-
         })
     }
 };
 
-module.exports = { start };
+const submit = async (req, res) => {
+    try{
+        const userId = req.user._id;
+        const sessionId = req.params.sessionId;
+        const answer = req.body.answer;
+        const result = await submitAnswer(sessionId, answer, userId);
+        res.status(200).json({
+            success: true,
+            data: result,
+        })
+    } catch(err){
+        console.error("Error in submitting answer: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to submit answer",
+        })
+    }
+};
+
+const history = async (req, res) => {
+    try{
+        const userId = req.user._id;
+        const history = await getInterviewHistory(userId);
+        res.status(200).json({
+            success: true,
+            data: history,
+        })
+    } catch(err){
+        console.error("Error in fetching history: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch history.",
+        })
+    }
+};
+
+module.exports = { start, submit, history };
