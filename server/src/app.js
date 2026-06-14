@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const authRoutes = require("./routes/auth.routes");
 const interviewRoutes = require("./routes/interview.routes");
+const aiRoutes = require("./routes/ai.routes");
 
 const app = express();
 
@@ -35,5 +36,6 @@ app.get("/health", (req,res)=>{
 
 app.use("/api/auth", authRoutes);
 app.use("/api/interviews", interviewRoutes);
+app.use("/api/ai", aiRoutes)
 
 module.exports = app;

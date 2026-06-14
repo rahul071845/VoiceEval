@@ -34,18 +34,33 @@ const interviewSessionSchema = new mongoose.Schema(
                     type: String,
                     required: true
                 },
+
                 answer: {
                     type: String,
                     default: ""
                 },
+
+                score: {
+                    type: Number,
+                    default: 0
+                },
+
                 feedback: {
                     type: String,
                     default: ""
                 },
-                score: {
-                    type: Number,
-                    default: 0
-                }
+
+                strengths: [{
+                    type: String
+                }],
+
+                weaknesses: [{
+                    type: String
+                }],
+
+                improvementSuggestions: [{
+                    type: String
+                }]
             }
         ],
         summary: {
