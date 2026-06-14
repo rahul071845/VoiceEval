@@ -1,6 +1,6 @@
 const InterviewSession = require("../models/InterviewSession");
 const { getQuestions } = require("../utils/questions");
-const { evaluateAnswer } = require("../utils/evaluateAnswer");
+const { evaluateInterviewAnswer } = require("./ai.service");
 
 const startInterview = async (userId, role, difficulty) => {
     if (!userId || !role || !difficulty) throw new Error("Missing required fields");
@@ -27,23 +27,29 @@ const submitAnswer = async (sessionId, answer, userId) => {
     if (!sessionId || !answer || !userId) throw new Error("Missing required fields");
     const interview = await InterviewSession.findById(sessionId);
     if (!interview) throw new Error("Session not found");
-    if (interview.user.toString() !== userId) throw new Error("Unauthorized user.");
+    if (interview.user.toString() !== userId.toString()) throw new Error("Unauthorized user.");
     if (interview.status === "completed") throw new Error("Interview already completed");
     const question = interview.questions[0];
     if (question.answer) {
         throw new Error("Answer already submitted");
     }
     question.answer = answer;
-    const { score, feedback } = evaluateAnswer(answer);
-    question.score = score;
-    question.feedback = feedback;
-    interview.score = score;
+    const aiEvaluation = await evaluateInterviewAnswer(question.question, answer, interview.role, interview.difficulty)
+    question.feedback = aiEvaluation.feedback;
+    question.score = aiEvaluation.score;
+    question.strengths = aiEvaluation.strengths;
+    question.weaknesses = aiEvaluation.weaknesses;
+    question.improvementSuggestions = aiEvaluation.improvementSuggestions;
+    interview.score = aiEvaluation.score;
     interview.status = "completed";
     await interview.save();
     return {
-        score,
-        feedback,
-    }
+        score: aiEvaluation.score,
+        feedback: aiEvaluation.feedback,
+        strengths: aiEvaluation.strengths,
+        weaknesses: aiEvaluation.weaknesses,
+        improvementSuggestions: aiEvaluation.improvementSuggestions
+    };
 };
 
 const getInterviewHistory = async (userId) => {
