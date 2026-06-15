@@ -24,6 +24,10 @@ const interviewSessionSchema = new mongoose.Schema(
             ],
             default: "in_progress"
         },
+        maxQuestions: {
+            type: Number,
+            default: 3
+        },
         score: {
             type: Number,
             default: 0
