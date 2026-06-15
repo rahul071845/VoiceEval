@@ -1,4 +1,4 @@
-const { startInterview, submitAnswer, getInterviewHistory } = require("../services/interview.service");
+const { startInterview, submitAnswer, getInterviewHistory, getAnalytics } = require("../services/interview.service");
 
 const start = async (req, res) => {
     try {
@@ -54,4 +54,21 @@ const history = async (req, res) => {
     }
 };
 
-module.exports = { start, submit, history };
+const analytics = async (req, res) => {
+    try{
+        const userId = req.user._id;
+        const analytics = await getAnalytics(userId);
+        res.status(200).json({
+            success: true,
+            data: analytics,
+        })
+    } catch(err){
+        console.error("Error in fetching analytics: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch analytics.",
+        })
+    }
+};
+
+module.exports = { start, submit, history, analytics };

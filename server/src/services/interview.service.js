@@ -65,4 +65,28 @@ const getInterviewHistory = async (userId) => {
     }));
 };
 
-module.exports = { startInterview, submitAnswer, getInterviewHistory };
+const getAnalytics = async (userId) => {
+    const allInterviews = await InterviewSession.find({ user: userId });
+    const completedInterviews = allInterviews.filter(interview => interview.status === "completed");
+    if (allInterviews.length === 0 || completedInterviews.length === 0) {
+        return {
+            totalInterviews: 0,
+            averageScore: 0,
+            bestScore: 0,
+            worstScore: 0,
+            completedInterviews: 0
+        };
+    }
+    const averageScore = completedInterviews.reduce((acc, interview) => acc + interview.score, 0) / completedInterviews.length;
+    const bestScore = Math.max(...completedInterviews.map(i => i.score));
+    const worstScore = Math.min(...completedInterviews.map(i => i.score));
+    return {
+        totalInterviews: allInterviews.length,
+        averageScore,
+        bestScore,
+        worstScore,
+        completedInterviews: completedInterviews.length
+    };
+};
+
+module.exports = { startInterview, submitAnswer, getInterviewHistory, getAnalytics };
