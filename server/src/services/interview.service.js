@@ -75,6 +75,23 @@ const submitAnswer = async (sessionId, answer, userId) => {
     }
 };
 
+const getInterviewById = async (sessionId, userId) => {
+    if (!sessionId || !userId) throw new Error("Missing required fields");
+    const interview = await InterviewSession.findById(sessionId);
+    if (!interview) throw new Error("Session not found");
+    if (interview.user.toString() !== userId.toString()) throw new Error("Unauthorized user.");
+    const currentQuestion = interview.questions[interview.questions.length - 1];
+    return{
+        sessionId: interview._id,
+        role: interview.role,
+        difficulty: interview.difficulty,
+        status: interview.status,
+        maxQuestions: interview.maxQuestions,
+        currentQuestionIndex: interview.questions.length - 1,
+        currentQuestion: currentQuestion.question
+    }
+};
+
 const getInterviewHistory = async (userId) => {
     if (!userId) throw new Error("User ID is required");
     const interviews = await InterviewSession.find({ user: userId }).sort({ createdAt: -1 });
@@ -112,4 +129,4 @@ const getAnalytics = async (userId) => {
     };
 };
 
-module.exports = { startInterview, submitAnswer, getInterviewHistory, getAnalytics };
+module.exports = { startInterview, submitAnswer, getInterviewById, getInterviewHistory, getAnalytics };
