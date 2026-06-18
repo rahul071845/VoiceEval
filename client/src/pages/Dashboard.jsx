@@ -33,7 +33,7 @@ const Dashboard = () => {
     const startInterviewMutation = useMutation({
         mutationFn: startInterview,
         onSuccess: (response) => {
-            console.log(response.data);
+            // console.log(response.data);
             if (response.success && response.data) {
                 navigate(`/interview/${response.data.sessionId}`);
             }
