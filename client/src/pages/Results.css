@@ -1,0 +1,333 @@
+.results-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 24px;
+  text-align: left;
+}
+
+.results-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-left h1 {
+  margin: 0 0 8px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-left p {
+  color: var(--text);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.difficulty-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 12px;
+}
+
+.difficulty-badge.easy {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.difficulty-badge.medium {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.difficulty-badge.hard {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.score-card {
+  background: linear-gradient(135deg, var(--accent-bg) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border: 1px solid var(--accent-border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 40px;
+}
+
+.score-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) calc(var(--score-percent) * 1%), var(--border) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 15px rgba(170, 59, 255, 0.2);
+}
+
+.score-circle::before {
+  content: '';
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.score-value {
+  position: absolute;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.score-text {
+  flex: 1;
+}
+
+.score-title {
+  font-size: 1.4rem;
+  margin: 0 0 6px 0;
+  color: var(--text-h);
+}
+
+.score-desc {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.summary-section {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow);
+}
+
+.summary-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  color: var(--text-h);
+}
+
+.summary-content {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.questions-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 24px;
+  color: var(--text-h);
+}
+
+.question-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.question-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+}
+
+.question-header {
+  padding: 20px 24px;
+  background: var(--code-bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.question-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-h);
+  line-height: 1.5;
+}
+
+.question-num {
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.question-score {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.question-score.high {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.question-score.avg {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.question-score.low {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.question-body {
+  padding: 24px;
+}
+
+.section-block {
+  margin-bottom: 20px;
+}
+
+.section-block:last-child {
+  margin-bottom: 0;
+}
+
+.section-block h4 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-h);
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.answer-container {
+  background-color: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.feedback-container {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.bullets-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bullets-list li {
+  position: relative;
+  padding-left: 24px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.bullets-list li::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.strengths-list li::before {
+  background-color: #10b981;
+}
+
+.weaknesses-list li::before {
+  background-color: #ef4444;
+}
+
+.improvements-list li::before {
+  background-color: #3b82f6;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  margin-bottom: 24px;
+}
+
+.back-btn:hover {
+  background: var(--code-bg);
+  color: var(--text-h);
+  border-color: var(--text);
+}
+
+.no-data-msg {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text);
+}
+
+.no-data-msg h2 {
+  margin-bottom: 12px;
+}
+
+/* Icons */
+.icon-svg {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon-svg.green { color: #10b981; fill: currentColor; }
+.icon-svg.red { color: #ef4444; fill: currentColor; }
+.icon-svg.blue { color: #3b82f6; fill: currentColor; }
+.icon-svg.purple { color: var(--accent); fill: currentColor; }

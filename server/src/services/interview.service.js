@@ -81,15 +81,18 @@ const getInterviewById = async (sessionId, userId) => {
     if (!interview) throw new Error("Session not found");
     if (interview.user.toString() !== userId.toString()) throw new Error("Unauthorized user.");
     const currentQuestion = interview.questions[interview.questions.length - 1];
-    return{
+    return {
         sessionId: interview._id,
         role: interview.role,
         difficulty: interview.difficulty,
         status: interview.status,
         maxQuestions: interview.maxQuestions,
+        score: interview.score,
+        summary: interview.summary,
+        questions: interview.questions,
         currentQuestionIndex: interview.questions.length - 1,
-        currentQuestion: currentQuestion.question
-    }
+        currentQuestion: currentQuestion ? currentQuestion.question : null
+    };
 };
 
 const getInterviewHistory = async (userId) => {

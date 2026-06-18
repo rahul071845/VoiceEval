@@ -29,7 +29,7 @@ const evaluateInterviewAnswer = async (ques, ans, role, difficulty) => {
         Difficulty: ${difficulty}
         Return ONLY valid JSON.
         {
-        "score": number (0 to 10 representing the percentage score),
+        "score": number (an integer from 0 to 10, where 0 is poor and 10 is perfect. Do NOT use a 0-100 scale),
         "feedback": string,
         "strengths": [string],
         "weaknesses": [string],
