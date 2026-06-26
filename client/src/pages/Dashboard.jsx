@@ -101,13 +101,13 @@ const Dashboard = () => {
                 <div className="metric-card">
                     <span className="metric-label">Average Score</span>
                     <span className="metric-value">
-                        {stats.averageScore ? `${stats.averageScore.toFixed(1)}/10` : "N/A"}
+                        {stats.completedInterviews > 0 ? `${stats.averageScore.toFixed(1)}/10` : "N/A"}
                     </span>
                 </div>
                 <div className="metric-card">
                     <span className="metric-label">Best Score</span>
                     <span className="metric-value">
-                        {stats.bestScore ? `${stats.bestScore.toFixed(1)}/10` : "N/A"}
+                        {stats.completedInterviews > 0 ? `${stats.bestScore.toFixed(1)}/10` : "N/A"}
                     </span>
                 </div>
                 <div className="metric-card">

@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getInterviewSession, submitAnswer } from "../services/interviewService";
+import { useSpeechToText } from "../hooks/useSpeechToText";
 import "./Interview.css";
 
 const Interview = () => {
     const { sessionId } = useParams();
-    const [answer, setAnswer] = useState("");
+    const [answer, setAnswer] = useState(() => {
+        if (sessionId) {
+            return localStorage.getItem(`voiceeval_draft_${sessionId}`) || "";
+        }
+        return "";
+    });
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+
+    useEffect(() => {
+        if (sessionId) {
+            if (answer) {
+                localStorage.setItem(`voiceeval_draft_${sessionId}`, answer);
+            } else {
+                localStorage.removeItem(`voiceeval_draft_${sessionId}`);
+            }
+        }
+    }, [answer, sessionId]);
 
     const {
         data: interviewData,
@@ -19,11 +35,19 @@ const Interview = () => {
         queryFn: () => getInterviewSession(sessionId)
     });
 
+    const { isListening, toggleListening, isSupported } = useSpeechToText((transcript) => {
+        // Append the new spoken words to your current text area answer
+        setAnswer((prev) => (prev ? prev + " " + transcript : transcript));
+    });
+
     const submitAnswerMutation = useMutation({
         mutationFn: submitAnswer,
         onSuccess: (response) => {
             if (response.success && response.data) {
+                localStorage.removeItem(`voiceeval_draft_${sessionId}`);
                 if (response.data.status === "completed") {
+                    queryClient.invalidateQueries({ queryKey: ["history"] });
+                    queryClient.invalidateQueries({ queryKey: ["analytics"] });
                     navigate(`/results/${sessionId}`);
                     return;
                 }
@@ -104,8 +128,8 @@ const Interview = () => {
                     <span>Question {currentQIdx + 1} of {totalQ}</span>
                 </div>
                 <div className="progress-bar-bg">
-                    <div 
-                        className="progress-bar-fill" 
+                    <div
+                        className="progress-bar-fill"
                         style={{ width: `${progressPercent}%` }}
                     ></div>
                 </div>
@@ -128,14 +152,37 @@ const Interview = () => {
                     onChange={(e) => setAnswer(e.target.value)}
                     required
                 />
-                
+                {isSupported && (
+                    <button
+                        type="button"
+                        onClick={toggleListening}
+                        className={`mic-btn ${isListening ? "listening" : ""}`}
+                        disabled={submitAnswerMutation.isPending}
+                    >
+                        {isListening ? (
+                            <>
+                                <span className="mic-dot"></span>
+                                <span>Stop Speaking</span>
+                                <div className="voice-wave-container">
+                                    <div className="wave-bar bar-1"></div>
+                                    <div className="wave-bar bar-2"></div>
+                                    <div className="wave-bar bar-3"></div>
+                                    <div className="wave-bar bar-4"></div>
+                                    <div className="wave-bar bar-5"></div>
+                                </div>
+                            </>
+                        ) : (
+                            "Answer with Voice"
+                        )}
+                    </button>
+                )}
                 <div className="footer-actions">
                     <span className={`char-counter ${answer.length < 20 ? "error" : ""}`}>
                         {answer.length} characters {answer.length < 20 && "(min 20)"}
                     </span>
-                    
-                    <button 
-                        type="submit" 
+
+                    <button
+                        type="submit"
                         className="submit-btn"
                         disabled={answer.trim().length < 20}
                     >

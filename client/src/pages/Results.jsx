@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { getInterviewSession } from "../services/interviewService";
 import "./Results.css";
 
@@ -38,6 +38,11 @@ const Results = () => {
     }
 
     const session = interviewData.data;
+
+    if (session.status !== "completed") {
+        return <Navigate to={`/interview/${sessionId}`} replace />;
+    }
+
     const questions = session.questions || [];
     const overallScore = session.score || 0;
     const scorePercent = overallScore * 10;

@@ -1,5 +1,28 @@
 const { startInterview, submitAnswer, getInterviewHistory, getAnalytics, getInterviewById } = require("../services/interview.service");
 
+const mapErrorToResponse = (err, res, defaultMessage) => {
+    const msg = err.message || "";
+    let status = 500;
+    if (
+        msg.includes("Missing required fields") ||
+        msg.includes("already completed") ||
+        msg.includes("already submitted") ||
+        msg.includes("No questions found") ||
+        msg.includes("is required")
+    ) {
+        status = 400;
+    } else if (msg.includes("Unauthorized")) {
+        status = 403;
+    } else if (msg.includes("Session not found")) {
+        status = 404;
+    }
+    return res.status(status).json({
+        success: false,
+        message: defaultMessage,
+        error: msg
+    });
+};
+
 const start = async (req, res) => {
     try {
         const { role, difficulty } = req.body;
@@ -11,10 +34,7 @@ const start = async (req, res) => {
         })
     } catch (err) {
         console.error("Error in starting interview: ", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to start interview",
-        })
+        mapErrorToResponse(err, res, "Failed to start interview");
     }
 };
 
@@ -30,10 +50,7 @@ const submit = async (req, res) => {
         })
     } catch(err){
         console.error("Error in submitting answer: ", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to submit answer",
-        })
+        mapErrorToResponse(err, res, "Failed to submit answer");
     }
 };
 
@@ -48,10 +65,7 @@ const interviewById = async (req, res) => {
         })
     } catch(err){
         console.error("Error in fetching interview: ", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch the interview.",
-        })
+        mapErrorToResponse(err, res, "Failed to fetch the interview.");
     }
 }
 
@@ -65,10 +79,7 @@ const history = async (req, res) => {
         })
     } catch(err){
         console.error("Error in fetching history: ", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch history.",
-        })
+        mapErrorToResponse(err, res, "Failed to fetch history.");
     }
 };
 
@@ -82,10 +93,7 @@ const analytics = async (req, res) => {
         })
     } catch(err){
         console.error("Error in fetching analytics: ", err);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch analytics.",
-        })
+        mapErrorToResponse(err, res, "Failed to fetch analytics.");
     }
 };
 

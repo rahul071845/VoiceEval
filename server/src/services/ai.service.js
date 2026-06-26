@@ -5,20 +5,38 @@ const genAI = new GoogleGenerativeAI(
     process.env.GEMINI_API_KEY
 );
 
+const retryWithBackoff = async (fn, retries = 3, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            if (i === retries - 1) throw err;
+            console.warn(`Gemini API call failed (attempt ${i + 1}/${retries}). Retrying in ${delay}ms... Error:`, err.message);
+            await new Promise(res => setTimeout(res, delay));
+            delay *= 2;
+        }
+    }
+};
+
 const testGeminiConnection = async () => {
     const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash"
     });
-    const result = await model.generateContent(
-        "Reply with exactly: Gemini Connected"
-    );
-    const response = result.response;
-    return response.text();
+    const rawText = await retryWithBackoff(async () => {
+        const result = await model.generateContent(
+            "Reply with exactly: Gemini Connected"
+        );
+        return result.response.text();
+    });
+    return rawText;
 };
 
 const evaluateInterviewAnswer = async (ques, ans, role, difficulty) => {
     const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash"
+        model: "gemini-2.5-flash",
+        generationConfig: {
+            responseMimeType: "application/json"
+        }
     });
     const prompt = `
         You are a Senior Software Engineer conducting a technical interview.
@@ -36,9 +54,10 @@ const evaluateInterviewAnswer = async (ques, ans, role, difficulty) => {
         "improvementSuggestions": [string]
         }
         `;
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const rawText = response.text();
+    const rawText = await retryWithBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+    });
     const parsed = extractJson(rawText);
     return parsed;
 };
@@ -58,9 +77,11 @@ const generateFirstQuestion = async (role, difficulty) => {
         - No numbering.
         - No explanation.
         `;
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    return response.text().replace(/^"|"$/g, "").trim();
+    const rawText = await retryWithBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+    });
+    return rawText.replace(/^"|"$/g, "").trim();
 };
 
 const generateNextQuestion = async (role, difficulty, previousQuestion, previousAnswer, score, weaknesses ) => {
@@ -84,9 +105,11 @@ const generateNextQuestion = async (role, difficulty, previousQuestion, previous
         - Reduce difficulty if score < 5.
         - Return only the question text.
         `;
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    return response.text().replace(/^"|"$/g, "").trim();
+    const rawText = await retryWithBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+    });
+    return rawText.replace(/^"|"$/g, "").trim();
 };
 
 const generateInterviewSummary = async (questions) => {
@@ -110,9 +133,11 @@ const generateInterviewSummary = async (questions) => {
         - Suggested focus areas
         Return only the summary text.
         `;
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    return response.text().replace(/^"|"$/g, "").trim();
+    const rawText = await retryWithBackoff(async () => {
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+    });
+    return rawText.replace(/^"|"$/g, "").trim();
 };
 
 module.exports = { testGeminiConnection, evaluateInterviewAnswer, generateFirstQuestion, generateNextQuestion, generateInterviewSummary };

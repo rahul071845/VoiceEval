@@ -120,9 +120,9 @@ const getAnalytics = async (userId) => {
             worstScore: 0
         };
     }
-    const averageScore = completedInterviews.reduce((acc, interview) => acc + interview.score, 0) / completedInterviews.length;
-    const bestScore = Math.max(...completedInterviews.map(i => i.score));
-    const worstScore = Math.min(...completedInterviews.map(i => i.score));
+    const averageScore = parseFloat((completedInterviews.reduce((acc, interview) => acc + interview.score, 0) / completedInterviews.length).toFixed(1));
+    const bestScore = parseFloat(Math.max(...completedInterviews.map(i => i.score)).toFixed(1));
+    const worstScore = parseFloat(Math.min(...completedInterviews.map(i => i.score)).toFixed(1));
     return {
         totalInterviews: allInterviews.length,
         averageScore,
