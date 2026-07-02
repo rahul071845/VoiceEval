@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from "../services/authService";
-import { useAuth } from "../context/AuthContext";
+import { registerUser } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 import "./Register.css";
 
 const Register = () => {

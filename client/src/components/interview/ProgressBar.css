@@ -1,0 +1,39 @@
+
+
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: SpotifyMixUI, "Helvetica Neue", helvetica, arial, "Inter", sans-serif;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.progress-label span {
+    font-size: 12px;
+    font-weight: 700;
+    color: #b3b3b3;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+}
+
+
+.progress-bar-bg {
+    background-color: #282828;
+    height: 3px;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+
+.progress-bar-fill {
+    background-color: #1ed760;
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}

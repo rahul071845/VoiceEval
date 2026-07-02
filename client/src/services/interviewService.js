@@ -7,7 +7,6 @@ export const startInterview = async (interviewData) => {
 
 export const getInterviewSession = async (sessionId) => {
     const response = await api.get(`/interviews/${sessionId}`);
-    // console.log(response.data);
     return response.data;
 };
 

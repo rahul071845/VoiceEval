@@ -1,0 +1,141 @@
+
+
+.navbar-header {
+    background-color: rgba(18, 18, 18, 0.92);
+    border-bottom: 1px solid #282828;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    height: 56px;
+    font-family: SpotifyMixUI, "Helvetica Neue", helvetica, arial, "Inter", sans-serif;
+}
+
+
+.navbar-logo {
+    font-family: SpotifyMixUITitle, SpotifyMixUI, "Helvetica Neue", helvetica, arial, "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.2px;
+}
+
+.navbar-logo-icon {
+    color: #1ed760; 
+    font-size: 1.2rem;
+}
+
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navbar-link {
+    color: #b3b3b3;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+
+.navbar-link:hover {
+    color: #ffffff;
+}
+
+.navbar-user-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    padding-left: 16px;
+    border-left: 1px solid #282828;
+}
+
+
+.navbar-user-name {
+    color: #b3b3b3;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+
+.navbar-logout-btn {
+    background-color: transparent;
+    border: 1px solid #7c7c7c;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+    line-height: 1;
+}
+
+.navbar-logout-btn:hover {
+    border-color: #ffffff;
+    transform: scale(1.04);
+}
+
+.navbar-logout-btn:active {
+    transform: scale(0.98);
+}
+
+
+.navbar-signup-btn {
+    background-color: #1ed760;
+    color: #000000;
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    border: none;
+    transition: background-color 0.15s, transform 0.1s;
+    line-height: 1;
+}
+
+.navbar-signup-btn:hover {
+    background-color: #1fdf64;
+    transform: scale(1.04);
+}
+
+.navbar-signup-btn:active {
+    transform: scale(0.98);
+}
+
+
+@media (max-width: 640px) {
+    .navbar-container { padding: 0 16px; height: 52px; }
+    .navbar-user-name { display: none; }
+    .navbar-links     { gap: 2px; }
+    .navbar-link      { padding: 6px 8px; font-size: 13px; }
+    .navbar-logout-btn { padding: 5px 12px; font-size: 11px; }
+    .navbar-signup-btn { padding: 7px 14px; font-size: 11px; }
+}

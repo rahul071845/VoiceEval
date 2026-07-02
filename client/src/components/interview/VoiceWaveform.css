@@ -1,0 +1,29 @@
+
+
+.voice-wave-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 14px;
+}
+
+
+.wave-bar {
+    width: 2px;
+    height: 3px;
+    
+    background-color: #f3727f;
+    border-radius: 9999px;
+    animation: wf-bounce 0.85s ease-in-out infinite;
+}
+
+.bar-1 { animation-delay: 0s;     animation-duration: 0.85s; }
+.bar-2 { animation-delay: 0.12s;  animation-duration: 0.90s; }
+.bar-3 { animation-delay: 0.24s;  animation-duration: 0.80s; }
+.bar-4 { animation-delay: 0.06s;  animation-duration: 0.95s; }
+.bar-5 { animation-delay: 0.18s;  animation-duration: 0.88s; }
+
+@keyframes wf-bounce {
+    0%, 100% { transform: scaleY(1); }
+    50%       { transform: scaleY(4); }
+}

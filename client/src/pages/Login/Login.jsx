@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../services/authService";
+import { loginUser } from "../../services/authService";
 import "./Login.css";
 
 const Login = () => {
@@ -13,7 +13,6 @@ const Login = () => {
     const loginMutation = useMutation({
         mutationFn: loginUser,
         onSuccess: (response) => {
-            console.log("Login response:", response);
             if (response.success && response.data) {
                 const { user, token } = response.data;
                 login(user, token);

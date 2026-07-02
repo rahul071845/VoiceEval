@@ -10,36 +10,27 @@ export const useSpeechToText = (onTranscript) => {
     }, [onTranscript]);
 
     useEffect(() => {
-        // 1. Resolve browser compatibility
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
+
         if (!SpeechRecognition) {
             console.warn("Speech recognition is not supported in this browser.");
             return;
         }
 
-        // 2. Initialize recognition settings
         const recognition = new SpeechRecognition();
-        recognition.continuous = true;      // Keep listening even if the user pauses
-        recognition.interimResults = false;  // Only return final, completed phrases
-        recognition.lang = "en-US";          // Target language
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
 
-        // 3. Define event handlers
         recognition.onstart = () => setIsListening(true);
-        
         recognition.onend = () => setIsListening(false);
-        
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
             setIsListening(false);
         };
 
         recognition.onresult = (event) => {
-            // Get the transcript of the last spoken phrase
-            const currentResultIndex = event.resultIndex;
-            const transcript = event.results[currentResultIndex][0].transcript;
-            
-            // Pass the spoken text back to the component
+            const transcript = event.results[event.resultIndex][0].transcript;
             if (callbackRef.current) {
                 callbackRef.current(transcript);
             }
@@ -54,13 +45,11 @@ export const useSpeechToText = (onTranscript) => {
         };
     }, []);
 
-    // 4. Toggle Listening
     const toggleListening = () => {
         if (!recognitionRef.current) {
-            alert("Speech recognition is not supported in your current browser. Please try Chrome or Safari.");
+            alert("Speech recognition is not supported in your browser. Please try Chrome or Safari.");
             return;
         }
-
         if (isListening) {
             recognitionRef.current.stop();
         } else {
@@ -68,5 +57,9 @@ export const useSpeechToText = (onTranscript) => {
         }
     };
 
-    return { isListening, toggleListening, isSupported: !!(window.SpeechRecognition || window.webkitSpeechRecognition) };
+    return {
+        isListening,
+        toggleListening,
+        isSupported: !!(window.SpeechRecognition || window.webkitSpeechRecognition)
+    };
 };
