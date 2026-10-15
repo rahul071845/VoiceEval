@@ -25,9 +25,9 @@ const mapErrorToResponse = (err, res, defaultMessage) => {
 
 const start = async (req, res) => {
     try {
-        const { role, difficulty } = req.body;
+        const { role, difficulty, jobDescription } = req.body;
         const userId = req.user._id;
-        const interview = await startInterview(userId, role, difficulty);
+        const interview = await startInterview(userId, role, difficulty, jobDescription);
         res.status(201).json({
             success: true,
             data: interview,

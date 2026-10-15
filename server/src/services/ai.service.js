@@ -62,7 +62,7 @@ const evaluateInterviewAnswer = async (ques, ans, role, difficulty) => {
     return parsed;
 };
 
-const generateFirstQuestion = async (role, difficulty) => {
+const generateFirstQuestion = async (role, difficulty, jobDescription = "") => {
     const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash"
     });
@@ -71,11 +71,13 @@ const generateFirstQuestion = async (role, difficulty) => {
         Generate ONE interview question.
         Role: ${role}
         Difficulty: ${difficulty}
+        ${jobDescription ? `Job Description / Target Profile:\n${jobDescription}\n` : ""}
         Requirements:
         - Ask only one question.
         - Return only the question text.
         - No numbering.
         - No explanation.
+        ${jobDescription ? "- Ensure the question directly aligns with the skills, stack, or experience levels specified in the Job Description." : ""}
         `;
     const rawText = await retryWithBackoff(async () => {
         const result = await model.generateContent(prompt);
@@ -84,7 +86,7 @@ const generateFirstQuestion = async (role, difficulty) => {
     return rawText.replace(/^"|"$/g, "").trim();
 };
 
-const generateNextQuestion = async (role, difficulty, previousQuestion, previousAnswer, score, weaknesses ) => {
+const generateNextQuestion = async (role, difficulty, previousQuestion, previousAnswer, score, weaknesses, jobDescription = "") => {
     const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash"
     });
@@ -92,6 +94,7 @@ const generateNextQuestion = async (role, difficulty, previousQuestion, previous
         You are a senior technical interviewer.
         Role: ${role}
         Difficulty: ${difficulty}
+        ${jobDescription ? `Job Description / Target Profile:\n${jobDescription}\n` : ""}
         Previous Question: ${previousQuestion}
         Candidate Answer: ${previousAnswer}
         Score:${score}
@@ -104,6 +107,7 @@ const generateNextQuestion = async (role, difficulty, previousQuestion, previous
         - Increase difficulty if score > 8.
         - Reduce difficulty if score < 5.
         - Return only the question text.
+        ${jobDescription ? "- Keep the question tailored to the scope and technologies listed in the Job Description." : ""}
         `;
     const rawText = await retryWithBackoff(async () => {
         const result = await model.generateContent(prompt);

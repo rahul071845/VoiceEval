@@ -248,6 +248,37 @@
     box-shadow: rgb(0, 0, 0) 0px 0px 0px 1px, rgb(255, 255, 255) 0px 0px 0px 2px;
 }
 
+.db-field-full {
+    width: 100%;
+}
+
+.db-textarea {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: inherit;
+    padding: 14px 20px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    box-shadow: rgb(18, 18, 18) 0px 1px 0px, rgb(124, 124, 124) 0px 0px 0px 1px inset;
+    transition: box-shadow 0.15s ease;
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+    box-sizing: border-box;
+}
+
+.db-textarea::placeholder {
+    color: #535353;
+}
+
+.db-textarea:focus {
+    box-shadow: rgb(0, 0, 0) 0px 0px 0px 1px, rgb(255, 255, 255) 0px 0px 0px 2px;
+}
+
 .db-input:disabled,
 .db-select:disabled {
     opacity: 0.5;
@@ -415,8 +446,83 @@
 
 .db-view-btn:active { transform: scale(0.98); }
 
+.db-resume-section {
+    width: 100%;
+}
 
+.db-resume-card {
+    background-color: #181818;
+    border-radius: 8px;
+    border-left: 4px solid #539df5;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 8px 8px;
+}
 
+.db-resume-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.db-resume-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.1px;
+}
+
+.db-resume-desc {
+    font-size: 14px;
+    font-weight: 400;
+    color: #b3b3b3;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 540px;
+}
+
+.db-resume-btn {
+    background-color: #1ed760;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 12px 28px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.1s;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.db-resume-btn:hover {
+    background-color: #1fdf64;
+    transform: scale(1.04);
+}
+
+.db-resume-btn:active {
+    transform: scale(0.98);
+}
+
+.db-resume-btn-table {
+    border-color: #1ed760;
+    color: #1ed760;
+}
+
+.db-resume-btn-table:hover {
+    border-color: #1fdf64;
+    color: #ffffff;
+    background-color: rgba(30, 215, 96, 0.1);
+    transform: scale(1.04);
+}
 
 @media (max-width: 896px) {
     .db-stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -431,6 +537,8 @@
     .db-new-fields { flex-direction: column; gap: 12px; }
     .db-field { min-width: unset; }
     .db-start-btn { width: 100%; align-self: stretch; text-align: center; }
+    .db-resume-card { flex-direction: column; align-items: stretch; padding: 20px; gap: 16px; }
+    .db-resume-btn { width: 100%; text-align: center; }
 }
 
 

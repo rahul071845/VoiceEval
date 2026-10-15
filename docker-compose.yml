@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: voiceeval-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./server
+    container_name: voiceeval-backend
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/voiceeval
+      - JWT_SECRET=dev_jwt_secret_token_key_here
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - PORT=5000
+      - CLIENT_URL=http://localhost:3000
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./client
+    container_name: voiceeval-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

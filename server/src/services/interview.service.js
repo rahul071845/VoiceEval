@@ -1,14 +1,15 @@
 const InterviewSession = require("../models/InterviewSession");
 const { evaluateInterviewAnswer, generateFirstQuestion, generateNextQuestion, generateInterviewSummary } = require("./ai.service");
 
-const startInterview = async (userId, role, difficulty) => {
+const startInterview = async (userId, role, difficulty, jobDescription = "") => {
     if (!userId || !role || !difficulty) throw new Error("Missing required fields");
-    const firstQues = await generateFirstQuestion(role, difficulty);
+    const firstQues = await generateFirstQuestion(role, difficulty, jobDescription);
     if (!firstQues) throw new Error("No questions found");
     const interview = await InterviewSession.create({
         user: userId,
         role,
         difficulty,
+        jobDescription,
         status: "in_progress",
         questions: [{ question: firstQues }]
     });
@@ -49,7 +50,8 @@ const submitAnswer = async (sessionId, answer, userId) => {
             question.question,
             answer,
             aiEvaluation.score,
-            aiEvaluation.weaknesses
+            aiEvaluation.weaknesses,
+            interview.jobDescription
         );
         interview.questions.push({ question: nextQues });
         await interview.save();

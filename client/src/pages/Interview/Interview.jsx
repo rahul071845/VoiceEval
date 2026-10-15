@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getInterviewSession, submitAnswer } from "../../services/interviewService";
@@ -17,6 +17,8 @@ const Interview = () => {
         }
         return "";
     });
+    const [timeLeft, setTimeLeft] = useState(180);
+    const [timerStatus, setTimerStatus] = useState("idle");
     const navigate     = useNavigate();
     const queryClient  = useQueryClient();
 
@@ -43,7 +45,22 @@ const Interview = () => {
         onSuccess: (response) => {
             if (response.success && response.data) {
                 localStorage.removeItem(`voiceeval_draft_${sessionId}`);
+                localStorage.removeItem(`voiceeval_timer_${sessionId}_time`);
+                localStorage.removeItem(`voiceeval_timer_${sessionId}_status`);
+                localStorage.removeItem(`voiceeval_timer_${sessionId}_qidx`);
+
                 if (response.data.status === "completed") {
+                    queryClient.setQueryData(["interview", sessionId], (old) => {
+                        if (!old) return old;
+                        return {
+                            ...old,
+                            data: {
+                                ...old.data,
+                                status: "completed"
+                            }
+                        };
+                    });
+                    queryClient.invalidateQueries({ queryKey: ["interview", sessionId] });
                     queryClient.invalidateQueries({ queryKey: ["history"] });
                     queryClient.invalidateQueries({ queryKey: ["analytics"] });
                     navigate(`/results/${sessionId}`);
@@ -56,10 +73,61 @@ const Interview = () => {
     });
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         if (answer.trim().length < 20) return;
         submitAnswerMutation.mutate({ sessionId, answer });
     };
+
+    const session      = interviewData?.data;
+    const currentQIdx  = session?.currentQuestionIndex ?? 0;
+    const totalQ       = session?.maxQuestions ?? 3;
+
+    useEffect(() => {
+        if (!session) return;
+        const storedQIdx = localStorage.getItem(`voiceeval_timer_${sessionId}_qidx`);
+        const parsedQIdx = storedQIdx ? parseInt(storedQIdx, 10) : -1;
+
+        if (parsedQIdx === currentQIdx) {
+            const storedTime = localStorage.getItem(`voiceeval_timer_${sessionId}_time`);
+            const storedStatus = localStorage.getItem(`voiceeval_timer_${sessionId}_status`);
+            setTimeLeft(storedTime ? parseInt(storedTime, 10) : 180);
+            setTimerStatus(storedStatus || "idle");
+        } else {
+            setTimeLeft(180);
+            setTimerStatus("idle");
+            localStorage.setItem(`voiceeval_timer_${sessionId}_qidx`, currentQIdx.toString());
+            localStorage.setItem(`voiceeval_timer_${sessionId}_time`, "180");
+            localStorage.setItem(`voiceeval_timer_${sessionId}_status`, "idle");
+        }
+    }, [session?.currentQuestion, currentQIdx, sessionId]);
+
+    useEffect(() => {
+        if (!sessionId || !session) return;
+        const storedQIdx = localStorage.getItem(`voiceeval_timer_${sessionId}_qidx`);
+        const parsedQIdx = storedQIdx ? parseInt(storedQIdx, 10) : -1;
+        if (parsedQIdx !== currentQIdx) return;
+
+        localStorage.setItem(`voiceeval_timer_${sessionId}_time`, timeLeft.toString());
+        localStorage.setItem(`voiceeval_timer_${sessionId}_status`, timerStatus);
+    }, [timeLeft, timerStatus, sessionId, currentQIdx, session]);
+
+    useEffect(() => {
+        if (isLoading || isError || submitAnswerMutation.isPending || !session || timerStatus !== "running") return;
+
+        if (timeLeft <= 0) {
+            setTimerStatus("expired");
+            if (isListening) {
+                toggleListening();
+            }
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setTimeLeft((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [timeLeft, isLoading, isError, submitAnswerMutation.isPending, session, timerStatus, isListening, toggleListening]);
 
     if (isLoading) {
         return (
@@ -92,9 +160,17 @@ const Interview = () => {
         );
     }
 
-    const session      = interviewData?.data;
-    const currentQIdx  = session?.currentQuestionIndex ?? 0;
-    const totalQ       = session?.maxQuestions ?? 3;
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    };
+
+    const handleStartTimer = () => {
+        setTimerStatus("running");
+        localStorage.setItem(`voiceeval_timer_${sessionId}_status`, "running");
+        localStorage.setItem(`voiceeval_timer_${sessionId}_qidx`, currentQIdx.toString());
+    };
 
     return (
         <>
@@ -105,9 +181,24 @@ const Interview = () => {
                         <h1 className="iv-title">Technical Interview</h1>
                         <p className="iv-role">{session.role}</p>
                     </div>
-                    <span className={`iv-diff-badge iv-diff-${session.difficulty}`}>
-                        {session.difficulty}
-                    </span>
+                    <div className="iv-header-meta">
+                        {timerStatus === "idle" ? (
+                            <button
+                                type="button"
+                                onClick={handleStartTimer}
+                                className="iv-timer-btn"
+                            >
+                                Start Timer
+                            </button>
+                        ) : (
+                            <span className={`iv-timer ${timeLeft < 30 ? "iv-timer-warning" : ""}`}>
+                                {formatTime(timeLeft)}
+                            </span>
+                        )}
+                        <span className={`iv-diff-badge iv-diff-${session.difficulty}`}>
+                            {session.difficulty}
+                        </span>
+                    </div>
                 </header>
 
                 <ProgressBar currentQuestionIndex={currentQIdx} maxQuestions={totalQ} />
@@ -122,10 +213,17 @@ const Interview = () => {
                     <textarea
                         id="answer-input"
                         className="iv-textarea"
-                        placeholder="Provide a comprehensive explanation — minimum 20 characters…"
+                        placeholder={
+                            timerStatus === "idle"
+                                ? "Click 'Start Timer' in the header to begin writing your response..."
+                                : timerStatus === "expired"
+                                ? "Time has expired. You can no longer edit your response. Please submit it below."
+                                : "Provide a comprehensive explanation — minimum 20 characters…"
+                        }
                         value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
                         required
+                        disabled={timerStatus !== "running"}
                     />
 
                     {isSupported && (
@@ -133,7 +231,7 @@ const Interview = () => {
                             type="button"
                             onClick={toggleListening}
                             className={`iv-mic-btn ${isListening ? "iv-mic-active" : ""}`}
-                            disabled={submitAnswerMutation.isPending}
+                            disabled={submitAnswerMutation.isPending || timerStatus !== "running"}
                         >
                             {isListening ? (
                                 <>
@@ -154,7 +252,7 @@ const Interview = () => {
                         <button
                             type="submit"
                             className="iv-submit-btn"
-                            disabled={answer.trim().length < 20}
+                            disabled={answer.trim().length < 20 || timerStatus === "idle" || submitAnswerMutation.isPending}
                         >
                             Submit Answer
                         </button>

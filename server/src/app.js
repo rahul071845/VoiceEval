@@ -9,8 +9,20 @@ const aiRoutes = require("./routes/ai.routes");
 
 const app = express();
 
+const allowedOrigins = [
+    ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",").map(u => u.trim().replace(/\/+$/, "")) : []),
+    "http://localhost:5173",
+    "http://localhost:5000",
+    "http://localhost:5001"
+];
+
 const corsOptions = {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+            return callback(null, true);
+        }
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
     credentials: true,
 };
 

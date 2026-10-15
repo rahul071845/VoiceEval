@@ -16,6 +16,10 @@ const interviewSessionSchema = new mongoose.Schema(
             enum: ["easy", "medium", "hard"],
             required: true
         },
+        jobDescription: {
+            type: String,
+            default: ""
+        },
         status: {
             type: String,
             enum: [

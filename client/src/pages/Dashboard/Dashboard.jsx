@@ -12,6 +12,7 @@ const Dashboard = () => {
 
     const [role, setRole] = useState("Backend Engineer");
     const [difficulty, setDifficulty] = useState("medium");
+    const [jobDescription, setJobDescription] = useState("");
 
     const {
         data: historyData,
@@ -43,11 +44,15 @@ const Dashboard = () => {
     const handleStartNew = (e) => {
         e.preventDefault();
         if (!role.trim()) return;
-        startInterviewMutation.mutate({ role, difficulty });
+        startInterviewMutation.mutate({ role, difficulty, jobDescription });
     };
 
     const handleViewResults = (sessionId) => {
         navigate(`/results/${sessionId}`);
+    };
+
+    const handleResumeInterview = (sessionId) => {
+        navigate(`/interview/${sessionId}`);
     };
 
     const isLoading = isLoadingAnalytics || isLoadingHistory;
@@ -171,6 +176,17 @@ const Dashboard = () => {
                                     </select>
                                 </div>
                             </div>
+                            <div className="db-field db-field-full">
+                                <label htmlFor="job-description" className="db-field-label">Job Description (Optional)</label>
+                                <textarea
+                                    id="job-description"
+                                    className="db-textarea"
+                                    placeholder="Paste the job description or specific topics you want to practice (e.g. HTML/CSS, SQL, basic React)..."
+                                    value={jobDescription}
+                                    onChange={(e) => setJobDescription(e.target.value)}
+                                    disabled={startInterviewMutation.isPending}
+                                />
+                            </div>
                             <button
                                 type="submit"
                                 className="db-start-btn"
@@ -230,12 +246,19 @@ const Dashboard = () => {
                                                 })}
                                             </td>
                                             <td>
-                                                {session.status === "completed" && (
+                                                {session.status === "completed" ? (
                                                     <button
                                                         onClick={() => handleViewResults(session.sessionId)}
                                                         className="db-view-btn"
                                                     >
                                                         View
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleResumeInterview(session.sessionId)}
+                                                        className="db-view-btn db-resume-btn-table"
+                                                    >
+                                                        Resume
                                                     </button>
                                                 )}
                                             </td>
